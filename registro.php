@@ -39,6 +39,9 @@ if (isset($_GET['contrasena']) && isset($_GET['contrasena2']) && $_GET['nombre']
         fwrite($archivo, implode(',', $datos));
         $array[$contador] = $datos;
         $_SESSION['contador'] = $contador + 1;
+        if(!mkdir('archivos/'.$_GET['nombre'].'/', 0777, true)) {
+            $alerta ="Ha ocurrido un error al crear la carpeta de usuario";
+        }
         $success = "Cuenta creada correctamente!";
     } else
         $alerta = "¡Las contraseñas no coinciden! Por favor, vuelva a digitarlas";

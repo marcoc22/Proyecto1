@@ -183,3 +183,43 @@ input:-moz-placeholder {
         from(#a4b0cb),
         to(#b9c5dd));
 }
+
+nav {
+    height: 50px;
+    display: flex;
+    margin-bottom: 10px;
+    border-radius: 0.2em;
+    border-width: 10em;
+    border-color:#000000;
+    padding: 1em;
+    float:right;
+}
+.header-nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.header-nav li {
+    float: left;
+    flex: 0.1;
+    background-color: #26657F;
+    border-radius: 1em;
+}
+
+.header-nav li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+.header-nav li a:hover {
+    background-color: #0090CC;
+    border-radius: 1em;
+}
+header{
+}
