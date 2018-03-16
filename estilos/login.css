@@ -221,5 +221,19 @@ nav {
     background-color: #0090CC;
     border-radius: 1em;
 }
-header{
+main{
+    margin-top:6em;
+    display:flex;
+}
+table tr td,th{
+    text-align: center;
+}
+table thead{
+    background-color: #220e7b;
+}
+table thead tr th{
+    color: white;
+}
+tr:nth-child(even) {
+    background-color:#d6d6d8;
 }
