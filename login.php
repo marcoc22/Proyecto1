@@ -1,26 +1,46 @@
 <?php
-$directorio = "cuentas/cuentas.txt";
-$data = "";
+date_default_timezone_set('UTC');
 
-$archivo = fopen($directorio, "r+");
+try {
 
-while ($data = fread($archivo, 60)) {
-    $array[] = explode(',', $data);
-};
+    // Crea la conexión con la base de datos
+    $file_db = new PDO('sqlite:usuarios.db');
+    $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-for ($i = 0; $i < sizeof($array); $i++) {
-    for ($j = 0; $j < 2; $j++) {
-        $array2[$i][$j] = trim($array[$i][$j], " ");
+
+    // Selecciona todos los archivos que se encuentran en la tabla
+    $result = $file_db->query('SELECT * FROM usuarios');
+    $arrayNombres[] = "";
+    $arrayContrasenas[] = "";
+    $i = 0;
+
+    //Mete los valores en los array de nombres y contraseñas
+    foreach ($result as $row) {
+        $arrayNombres[$i] = $row['nombre'];
+        $arrayContrasenas[$i] = $row['contrasena'];
+        $i++;
     }
 
-    if (isset($_GET['nombre']) && isset($_GET['contrasena']) && isset($_GET['Inicio'])) {
-        if ($_GET['nombre'] == $array2[$i][0] && $_GET['contrasena'] == $array2[$i][1]) {
-            session_start();
-            $_SESSION['usuario'] = $_GET['nombre'];
-            header('Location: home.php');
-            break;
-        } else {
-            $alerta = "Nombre de usuario o contraseña incorrecta. ¡Ingréselos nuevamente!";
+	//Esto es para saber las contraseñas y los perfiles, luego lo puede quitar :v
+    print_r($arrayNombres);
+    print_r($arrayContrasenas);
+} catch (PDOException $e) {
+    // Print PDOException message
+    echo $e->getMessage();
+}
+
+if (isset($_GET['nombre']) && isset($_GET['contrasena']) && isset($_GET['Inicio'])) {
+    for ($j = 0; $j < sizeof($arrayNombres); $j++) { {
+            if ($_GET['nombre'] == $arrayNombres[$j] && $_GET['contrasena'] == $arrayContrasenas[$j]) {
+                session_start();
+                $_SESSION['usuario'] = $_GET['nombre'];
+                header('Location: home.php');
+                //Cierra la conexión con la base
+                $file_db = null;
+                break;
+            } else {
+                $alerta = "Nombre de usuario o contraseña incorrecta. ¡Ingréselos nuevamente!";
+            }
         }
     }
 }
