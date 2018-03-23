@@ -1,19 +1,33 @@
 <?php
 session_start();
-if(isset($_POST['guardar'])){//vamos a guardar los datos del formulario en el archivo y la carpeta que corresponde al usuario logueado
-    $nombre = isset($_POST['nombre'])?$_POST['nombre']:'';
-    $autor = isset($_POST['autor'])?$_POST['autor']:'';
-    $fecha = isset($_POST['fecha'])?$_POST['fecha']:'';
-    $clasificacion = isset($_POST['clasificacion'])?$_POST['clasificacion']:'';
-    $descripcion = isset($_POST['descripcion'])?$_POST['descripcion']:'';
+$success='';
+if(!isset($_SESSION['usuario'])){
+    session_destroy();
+    header('Location: index.php');
+    exit();
+}
+if (isset($_POST['guardar'])) {//vamos a guardar los datos del formulario en el archivo y la carpeta que corresponde al usuario logueado
+    $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
+    $autor = isset($_POST['autor']) ? $_POST['autor'] : '';
+    $fecha = isset($_POST['fecha']) ? $_POST['fecha'] : '';
+    $clasificacion = isset($_POST['clasificacion']) ? $_POST['clasificacion'] : '';
+    $descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : '';
+
     
-    $alerta = '';
-    if(empty($nombre)){
+    if (empty($nombre)) {
         $alerta .= 'El nombre no puede estar vacío<br>';
+    } else {
+        $dir_subida = 'archivos/'.$_SESSION['usuario'].'/';
+        $fichero_subido = $dir_subida . basename($_FILES['archivo']['name']);
+        if (!move_uploaded_file($_FILES['archivo']['tmp_name'], $fichero_subido)){
+             $alerta .= 'El archivo .mp3 no pudo ser guardado.<br>';
+        }
+        if(!isset($alerta)){
+            //guardar en archivo
+            $success='Datos guardados correctamente.';
+        }
     }
 }
-//crear archivo txt
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -37,15 +51,16 @@ if(isset($_POST['guardar'])){//vamos a guardar los datos del formulario en el ar
             <div class="container">
                 <a href="home.php">Volver al listado</a>
                 <div class="form-style-6" align="center">
-                    <h1>Contact Us</h1>
+                    <h1>Datos de mp3</h1>
+                    <font color="<?php echo isset($alerta)?'red':'green';?>"><?php echo isset($alerta)?$alerta:$success;?></font>
                     <form action='' method='post' enctype='multipart/form-data'>
-                        <input type="text" id="nombre" name="nombre" placeholder="Nombre">
-                        <input type="file" id="archivo" name="archivo"  accept=".mp3">
-                        <input type="text" id="autor" name="autor" placeholder="Autor">
-                        <input type="date" id="fecha" name="fecha" placeholder="Fecha">
-                        <input type="text" id="clasificacion" name="clasificacion">
-                        <textarea name="descripcion" placeholder="Descripción"></textarea>
-                        <input type="submit" name="guardar" value="Guardar" />
+                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                        <input type="file" id="archivo" name="archivo"  accept=".mp3" required>
+                        <input type="text" id="autor" name="autor" placeholder="Autor" required>
+                        <input type="date" id="fecha" name="fecha" placeholder="Fecha" required>
+                        <input type="text" id="clasificacion" name="clasificacion" required>
+                        <textarea name="descripcion" placeholder="Descripción" required></textarea>
+                        <input type="submit" name="guardar" value="Guardar">
                     </form>
                 </div>
             </div>
