@@ -1,5 +1,19 @@
 <?php
 session_start();
+if(isset($_POST['guardar'])){//vamos a guardar los datos del formulario en el archivo y la carpeta que corresponde al usuario logueado
+    $nombre = isset($_POST['nombre'])?$_POST['nombre']:'';
+    $autor = isset($_POST['autor'])?$_POST['autor']:'';
+    $fecha = isset($_POST['fecha'])?$_POST['fecha']:'';
+    $clasificacion = isset($_POST['clasificacion'])?$_POST['clasificacion']:'';
+    $descripcion = isset($_POST['descripcion'])?$_POST['descripcion']:'';
+    
+    $alerta = '';
+    if(empty($nombre)){
+        $alerta .= 'El nombre no puede estar vacío<br>';
+    }
+}
+//crear archivo txt
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -7,7 +21,7 @@ session_start();
         <title>HOME - Nueva entrada</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="estilos/login.css" rel="stylesheet" type="text/css">
+        <link href="estilos/login.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <header>
@@ -20,27 +34,21 @@ session_start();
             </nav>
         </header>
         <main>
-            <a href="home.php">Volver al listado</a>
-            <form action='' method='post' enctype='multipart/form-data'>
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre">
-                
-                <label for="autor">Autor</label>
-                <input type="text" id="autor" name="autor">
-                
-                <label for="fecha">Fecha</label>
-                <input type="date" id="fecha" name="fecha">
-                
-                <label for="descripcion">Descripción</label>
-                <input type="text" id="descripcion" name="descripcion">
-                
-                <label for="clasificacion">Clasificacion</label>
-                <input type="text" id="clasificacion" name="clasificacion">
-                
-                <label for="archivo">Archivo</label>
-                <input type="file" id="archivo" name="archivo"  accept=".mp3">
-                
-            </form>
+            <div class="container">
+                <a href="home.php">Volver al listado</a>
+                <div class="form-style-6" align="center">
+                    <h1>Contact Us</h1>
+                    <form action='' method='post' enctype='multipart/form-data'>
+                        <input type="text" id="nombre" name="nombre" placeholder="Nombre">
+                        <input type="file" id="archivo" name="archivo"  accept=".mp3">
+                        <input type="text" id="autor" name="autor" placeholder="Autor">
+                        <input type="date" id="fecha" name="fecha" placeholder="Fecha">
+                        <input type="text" id="clasificacion" name="clasificacion">
+                        <textarea name="descripcion" placeholder="Descripción"></textarea>
+                        <input type="submit" name="guardar" value="Guardar" />
+                    </form>
+                </div>
+            </div>
         </main>
         <footer>
 

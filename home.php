@@ -1,5 +1,6 @@
 <?php
 session_start();
+$_SESSION['usuario'] = 'marco';
 ?>
 <!DOCTYPE html>
 <html>
@@ -20,22 +21,25 @@ session_start();
             </nav>
         </header>
         <main>
-            <a href="nueva_entrada.php">Agregar nueva entrada</a>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Autor</th>
-                        <th>Fecha</th>
-                        <th>Tamaño</th>
-                        <th>Descripción</th>
-                        <th>Clasificación</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div>
+                <a href="nueva_entrada.php">Agregar nueva entrada</a>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Autor</th>
+                            <th>Fecha</th>
+                            <th>Tamaño</th>
+                            <th>Descripción</th>
+                            <th>Clasificación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+
         </main>
         <footer>
 
