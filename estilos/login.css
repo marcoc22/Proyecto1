@@ -19,6 +19,11 @@ body {
     max-width: 406px;
     margin: 0 auto;
 }
+.container-list {
+    width:100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
 
 #inicio {
     padding: 0px 25px 25px;
@@ -243,6 +248,22 @@ tr:nth-child(even) {
     margin: 10px auto;
     padding: 16px;
     background: #F7F7F7;
+}
+.form-style-8{
+    font: 95% Arial, Helvetica, sans-serif;
+    max-width: 800px;
+    margin: 10px auto;
+    padding: 16px;
+    background: #F7F7F7;
+}
+.form-style-8 h1{
+    background: #43D1AF;
+    padding: 20px 0;
+    font-size: 140%;
+    font-weight: 300;
+    text-align: center;
+    color: #fff;
+    margin: -16px -16px 16px -16px;
 }
 .form-style-6 h1{
     background: #43D1AF;

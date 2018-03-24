@@ -4,7 +4,7 @@ date_default_timezone_set('UTC');
 try {
 
     // Crea la conexión con la base de datos
-    $file_db = new PDO('sqlite:usuarios.db');
+    $file_db = new PDO('sqlite:database/usuarios.db');
     $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 
@@ -21,9 +21,9 @@ try {
         $i++;
     }
 
-	//Esto es para saber las contraseñas y los perfiles, luego lo puede quitar :v
-    print_r($arrayNombres);
-    print_r($arrayContrasenas);
+    //Esto es para saber las contraseñas y los perfiles, luego lo puede quitar :v
+    //print_r($arrayNombres);
+    //print_r($arrayContrasenas);
 } catch (PDOException $e) {
     // Print PDOException message
     echo $e->getMessage();
@@ -51,7 +51,7 @@ if (isset($_GET['nombre']) && isset($_GET['contrasena']) && isset($_GET['Inicio'
         <link href="estilos/login.css" rel="stylesheet" type="text/css">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Pantalla de inicio de Sesion </title> 
+        <title>Pantalla de inicio de sesión</title> 
     </head>
     <body>
 
@@ -61,7 +61,7 @@ if (isset($_GET['nombre']) && isset($_GET['contrasena']) && isset($_GET['Inicio'
 
                 <div class="header">
 
-                    <h3>Iniciar de sesión</h3>
+                    <h3>Iniciar sesión</h3>
 
                     <p>Introduce los datos de cuenta</p>
 
@@ -79,11 +79,11 @@ if (isset($_GET['nombre']) && isset($_GET['contrasena']) && isset($_GET['Inicio'
 
                     <input type="submit" id="submit" name="Inicio" value = "Iniciar sesión" />
 
-<?php
-if (isset($alerta)) {
-    echo '<p style= "color:red">' . $alerta . '</p>';
-}
-?>
+                    <?php
+                    if (isset($alerta)) {
+                        echo '<p style= "color:red">' . $alerta . '</p>';
+                    }
+                    ?>
 
                 </div>
 

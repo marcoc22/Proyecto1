@@ -16,7 +16,7 @@ if (isset($_GET['contrasena']) && isset($_GET['contrasena2']) && $_GET['nombre']
         try {
 
             // Crea la conección a la base de datos
-            $file_db = new PDO('sqlite:usuarios.db');
+            $file_db = new PDO('sqlite:database/usuarios.db');
             $file_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Ingresa los valores que el usuario digitó dentro del array            
