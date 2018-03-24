@@ -82,7 +82,8 @@ include('comun/header.php');
 
                     $btnEliminar = "<input type='submit' name='eliminar' value='Eliminar'>";
                     $btnEditar = "<input type='submit' name='editar' value='Editar'>";
-                    $btnMp3 = '<input type="file" id="archivo" name="archivo"  accept=".mp3" style="width:134px;">';
+                    $btnMp3 = '<input type="file" name="archivo"  accept=".mp3" style="width:134px;">';
+                    $btnMp3 .= '<input type="submit" name="subir" value="Subir mp3" >';
                     $row = array_pop($arrayContenido);
                     echo '<tr>';
                     

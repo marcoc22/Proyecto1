@@ -21,7 +21,7 @@ body {
 }
 .container-list {
     width:100%;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
@@ -251,7 +251,7 @@ tr:nth-child(even) {
 }
 .form-style-8{
     font: 95% Arial, Helvetica, sans-serif;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 10px auto;
     padding: 16px;
     background: #F7F7F7;

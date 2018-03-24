@@ -38,6 +38,8 @@ if (isset($_POST['guardar'])) {//vamos a guardar los datos del formulario en el 
     } else {
         /* $dir_subida = 'archivos/'.$_SESSION['usuario'].'/';
           $fichero_subido = $dir_subida . basename($_FILES['archivo']['name']);
+          
+         
           if (!move_uploaded_file($_FILES['archivo']['tmp_name'], $fichero_subido)){
           $alerta .= 'El archivo .mp3 no pudo ser guardado.<br>';
           } */
