@@ -11,21 +11,25 @@ if (isset($_POST['eliminar'])) {
     $detalleIndexUpdate = fopen($indicePath, "r+");
     $pos = 0;
     while (!feof($detalleIndexUpdate)) {
+
         $line = fgets($detalleIndexUpdate);
-        $pos += strlen($line);
+        $nuevasLineas = "";
         if (!empty($line)) {
-            $datos = explode(",", $line);
-            if ($datos[0] == $actual) {
-                $datos[1] = 0;
-                $nuevaLinea = implode(",", $datos) . "\n";
-                fseek($detalleIndexUpdate, $pos - strlen($line), SEEK_SET);
-                fwrite($detalleIndexUpdate, $nuevaLinea);
-                $arrayIndex[$datos[0]] = $datos;
-                break;
-            }
+            $lines = explode(";", $line);
+            foreach ($lines as $curLine) {
+                if (!empty($curLine)) {
+                    $datos = explode(",", $curLine);
+                    if ($datos[0] == $actual) {
+                        $datos[3] = 0;
+                    }
+                    $nuevaLinea = implode(",", $datos) . ';';
+                    $nuevasLineas .= $nuevaLinea;
+                }
+            }unset($curLine);
         }
-        unset($line);
     }
+    rewind($detalleIndexUpdate);
+    fwrite($detalleIndexUpdate, $nuevasLineas);
     fclose($detalleIndexUpdate);
 }
 
@@ -35,24 +39,30 @@ $detalleIndex = fopen($indicePath, "r");
 $arrayIndex = array();
 $arrayContenido = array();
 $ultimaLinea = 0;
-$file = new SplFileObject($contenidoPath);
+
 while (!feof($detalleIndex)) {
     $line = fgets($detalleIndex);
     if (!empty($line)) {
-        $datos = explode(",", $line);
-        if ($datos[1] == 1) {
-            $arrayIndex[$datos[0]] = $datos;
-            $lineaDato = (int) $datos[0];
-            $file->seek($lineaDato);
-            array_push($arrayContenido, explode(",", $file->current()));
-        }
-        $ultimaLinea++;
+        $lines = explode(";", $line);
+        foreach ($lines as $curLine) {
+            if (!empty($curLine)) {
+                $datos = explode(",", $curLine);
+                if ($datos[3] == 1) {
+                    $arrayIndex[$datos[0]] = $datos;
+                    $lineaDato = (int) $datos[1]; //donde inicia
+                    fseek($detalleArchivo, $lineaDato);
+                    $fila = fread($detalleArchivo, intval($datos[2])); //leer los bytes necesarios
+                    array_push($arrayContenido, explode(",", $fila));
+                }
+                $ultimaLinea++;
+            }
+        }unset($curLine);
     }
     unset($line);
 }
+
 fclose($detalleArchivo);
 fclose($detalleIndex);
-unset($file);
 
 
 
@@ -86,7 +96,7 @@ include('comun/header.php');
                     $btnMp3 .= '<input type="submit" name="subir" value="Subir mp3" >';
                     $row = array_pop($arrayContenido);
                     echo '<tr>';
-                    
+
                     echo "<td>{$row[1]}</td>";
                     echo "<td>{$row[2]}</td>";
                     echo "<td>{$row[3]}</td>";
