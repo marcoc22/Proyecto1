@@ -8,11 +8,10 @@ if (!isset($_SESSION['usuario'])) {
 }
 $contenidoPath = "database/contenido.txt";
 $indicePath = "database/indice.txt";
-$modoEdicion = false;
-$modoGuardar = FALSE;
+
 $arrayActual = array();
 
-echo exec($contenidoPath);
+//echo exec($contenidoPath);
 
 /*
   $filas = file($contenidoPath);
@@ -24,11 +23,12 @@ if (isset($_POST['nuevo'])) {
     $divStyle = "display:none;";
     $divStyle2 = "display:none;";
     $divStyleGuardar = "display:block;";
+    $MODOAGREGAR = TRUE;
 } else if (isset($_POST['guardar'])) {//vamos a guardar los datos del formulario en el archivo y la carpeta que corresponde al usuario logueado
-    $modoGuardar = TRUE;
     $divStyle = "display:none;";
     $divStyle2 = "display:none;";
     $divStyleGuardar = "display:block;";
+    $MODOAGREGAR = TRUE;
     $detalleIndex = fopen($indicePath, "r+");
     $arrayIndex = array();
     $arrayDisponibles = array(); //almaceno los campos de archivo que fueron borrados pero puedo utilizarlos para almacenar
@@ -124,10 +124,10 @@ if (isset($_POST['nuevo'])) {
 
 //*********************************LEYENDO ENTRADA EDITAR****************************************
 else if (isset($_POST['editar'])) {
-
-    $divStyle = "display:block;";
+    $MODOEDITAR = TRUE;
+    $divStyle = "display:none;";
     $divStyle2 = "display:none;";
-    $divStyleGuardar = "display:none;";
+    $divStyleGuardar = "display:block;";
 
     $actual = (int) $_POST['id'];
     $detalleIndexUpdate = fopen($indicePath, "r+");
@@ -143,7 +143,7 @@ else if (isset($_POST['editar'])) {
             foreach ($lines as $curLine) {
                 if (!empty($curLine)) {
                     $datos = explode(",", $curLine);
-                    if ($datos[0] == $actual) {
+                    if ($datos[0] == $actual && $datos[3] == 1) {
                         $datosActuales = $datos;
                         $lineaDato = (int) $datos[1]; //donde inicia
                         fseek($detalleArchivoUpdate, $lineaDato);
@@ -171,13 +171,13 @@ else if (isset($_POST['editar'])) {
      */
     //Obtiene los valores del form , (este código lo tomé prestado de abajo)
 } else if (isset($_POST['editarlo'])) {
-    
+    $MODOEDITAR = TRUE;
     $actual = (int) $_POST['id'];
     $detalleIndexUpdate = fopen($indicePath, "r+");
     $detalleArchivoUpdate = fopen($contenidoPath, "r+");
-$divStyle = "display:block;";
+    $divStyle = "display:none;";
     $divStyle2 = "display:none;";
-    $divStyleGuardar = "display:none;";
+    $divStyleGuardar = "display:block;";
 //Leo los valores del actual
 
     while (!feof($detalleIndexUpdate)) {
@@ -188,7 +188,7 @@ $divStyle = "display:block;";
             foreach ($lines as $curLine) {
                 if (!empty($curLine)) {
                     $datos = explode(",", $curLine);
-                    if ($datos[0] == $actual) {
+                    if ($datos[0] == $actual && $datos[3] == 1) {
                         $datosActuales = $datos;
                         $lineaDato = (int) $datos[1]; //donde inicia
                         fseek($detalleArchivoUpdate, $lineaDato);
@@ -199,14 +199,14 @@ $divStyle = "display:block;";
             }
         }
     }
-    
+
     $nombreActualizar = isset($_POST['nombre']) ? $_POST['nombre'] : '';
     $autorActualizar = isset($_POST['autor']) ? $_POST['autor'] : '';
     $fechaActualizar = isset($_POST['fecha']) ? $_POST['fecha'] : '';
     $clasificacionActualizar = isset($_POST['clasificacion']) ? $_POST['clasificacion'] : '';
     $descripcionActualizar = isset($_POST['descripcion']) ? $_POST['descripcion'] : '';
 
-    $datoActualizar = "{$nombreActualizar},{$autorActualizar},{$fechaActualizar},,{$clasificacionActualizar},{$descripcionActualizar},";
+    $datoActualizar = "{$datosActuales[0]},{$nombreActualizar},{$autorActualizar},{$fechaActualizar},,{$clasificacionActualizar},{$descripcionActualizar},";
     $tamanioContenido = strlen($datoActualizar);
     $lineaIndexActualizar = "{$datosActuales[0]},{$datosActuales[1]},{$tamanioContenido},1;";
 
@@ -218,18 +218,19 @@ $divStyle = "display:block;";
         fwrite($detalleArchivoUpdate, $datoActualizar);
         //Si no entonces bórreme el valor de forma lógica y luego insérte al final del archivo   
     } else {
-
         //"Llamo" al método eliminar para que lo edite 
+        $nuevasLineas = "";
+        fclose($detalleIndexUpdate);
+        $detalleIndexUpdate = fopen($indicePath, "r+");
         while (!feof($detalleIndexUpdate)) {
 
             $linea = fgets($detalleIndexUpdate);
-            $nuevasLineas = "";
             if (!empty($linea)) {
                 $lineas = explode(";", $linea);
                 foreach ($lineas as $lineaActual) {
                     if (!empty($lineaActual)) {
                         $datos = explode(",", $lineaActual);
-                        if ($datos[0] == $actual) {
+                        if ($datos[0] == $actual && $datos[3] == 1) {
                             $datos[3] = 0;
                         }
                         $nuevaLinea = implode(",", $datos) . ';';
@@ -238,20 +239,25 @@ $divStyle = "display:block;";
                 }unset($lineaActual);
             }
         }
+        
+        fseek($detalleArchivoUpdate, 0, SEEK_END); //puntero al final del archivo
+        $inicioContenido = ftell($detalleArchivoUpdate);
+        $nuevasLineas .= "{$datosActuales[0]},{$inicioContenido},{$tamanioContenido},1;";
 
-        fclose($detalleIndexUpdate);
         fclose($detalleArchivoUpdate);
+        fclose($detalleIndexUpdate);
 
         //Esto ingresa los valores al final
-        $detalleIndexLineaFinal = fopen($indicePath, "a+");
+        $detalleIndexLineaFinal = fopen($indicePath, "w");
         $detalleArchivoLineaFinal = fopen($contenidoPath, "a+");
 
         //Ya borrado lo inserta al final
         fwrite($detalleArchivoLineaFinal, $datoActualizar);
-        fwrite($detalleArchivoIndexFinal, $lineaIndexActualizar);
+        fwrite($detalleIndexLineaFinal, $nuevasLineas);
 
         fclose($detalleArchivoLineaFinal);
-        fclose($detalleArchivoIndexFinal);
+        fclose($detalleIndexLineaFinal);
+        header("Location: home.php");
     }
 } else {
     $divStyle = "display:none;";
@@ -328,44 +334,52 @@ fclose($detalleIndex);
 include('comun/header.php');
 ?>
 
-<div class="container" style="<?php echo $divStyleGuardar ?>">
-    <a href="home.php">Volver al listado</a>
-    <div class="form-style-6" align="center">
-        <h1>Datos de mp3</h1>
-        <font color="<?php echo isset($alerta) ? 'red' : 'green'; ?>"><?php echo isset($alerta) ? $alerta : $success; ?></font>
-        <?php
-        while (count($arrayActual) > 0) {
-            $filaActual = array_pop($arrayActual);
-        }
-        ?>
-        <form action='' method='post' enctype='multipart/form-data'>
-            <input type="text" id="nombre" value="<?php echo $filaActual[1]; ?>" name="nombre" placeholder="Nombre" required>
-            <!--<input type="file" id="archivo" name="archivo"  accept=".mp3" required>-->
-            <input type="text" id="autor" name="autor" value ="<?php echo $filaActual[2]; ?>"placeholder="Autor" required>
-            <input type="date" id="fecha" name="fecha" value="<?php echo $filaActual[3]; ?>" placeholder="Fecha" required >
-            <input type="text" id="clasificacion" name="clasificacion" value="<?php echo $filaActual[5]; ?>"  placeholder='Clasificación' required>
-            <input type="text" name="descripcion" value="<?php echo $filaActual[6]; ?>" placeholder="Descripción" required>
-            <input type="hidden" name="id" value="<?php echo $filaActual[0];?>" >;
-            <input type="submit" name="editarlo" value="Editar">
-        </form>
+<?php if (isset($MODOEDITAR)) { ?>
+    <div class="container" style="<?php echo $divStyleGuardar ?>">
+        <a href="home.php">Volver al listado</a>
+        <div class="form-style-6" align="center">
+            <h1>Datos de mp3</h1>
+            <font color="<?php echo isset($alerta) ? 'red' : 'green'; ?>"><?php echo isset($alerta) ? $alerta : $success; ?></font>
+            <?php
+            while (count($arrayActual) > 0) {
+                $filaActual = array_pop($arrayActual);
+            }
+            ?>
+            <form action='' method='post' enctype='multipart/form-data'>
+                <input type="text" id="nombre" value="<?php echo $filaActual[1]; ?>" name="nombre" placeholder="Nombre" required>
+                <!--<input type="file" id="archivo" name="archivo"  accept=".mp3" required>-->
+                <input type="text" id="autor" name="autor" value ="<?php echo $filaActual[2]; ?>"placeholder="Autor" required>
+                <input type="date" id="fecha" name="fecha" value="<?php echo $filaActual[3]; ?>" placeholder="Fecha" required >
+                <input type="text" id="clasificacion" name="clasificacion" value="<?php echo $filaActual[5]; ?>"  placeholder='Clasificación' required>
+                <input type="text" name="descripcion" value="<?php echo $filaActual[6]; ?>" placeholder="Descripción" required>
+                <input type="hidden" name="id" value="<?php echo $filaActual[0]; ?>" >;
+                <input type="submit" name="editarlo" value="Editar">
+            </form>
+        </div>
     </div>
-</div>
-<div class="container" style="<?php echo $divStyleGuardar ?>">
-    <a href="home.php">Volver al listado</a>
-    <div class="form-style-6" align="center">
-        <h1>Datos de mp3</h1>
-        <font color="<?php echo isset($alerta) ? 'red' : 'green'; ?>"><?php echo isset($alerta) ? $alerta : $success; ?></font>
-        <form action='' method='post' enctype='multipart/form-data'>
-            <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
-            <!--<input type="file" id="archivo" name="archivo"  accept=".mp3" required>-->
-            <input type="text" id="autor" name="autor" placeholder="Autor" required>
-            <input type="date" id="fecha" name="fecha" placeholder="Fecha" required value="12/12/2017">
-            <input type="text" id="clasificacion" name="clasificacion" placeholder='Clasificación' required>
-            <textarea name="descripcion" placeholder="Descripción" required></textarea>
-            <input type="submit" name="guardar" value="Guardar">
-        </form>
+    <?php
+}
+
+if (isset($MODOAGREGAR)) {
+    ?>
+
+    <div class="container" style="<?php echo $divStyleGuardar ?>">
+        <a href="home.php">Volver al listado</a>
+        <div class="form-style-6" align="center">
+            <h1>Datos de mp3</h1>
+            <font color="<?php echo isset($alerta) ? 'red' : 'green'; ?>"><?php echo isset($alerta) ? $alerta : $success; ?></font>
+            <form action='' method='post' enctype='multipart/form-data'>
+                <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                <!--<input type="file" id="archivo" name="archivo"  accept=".mp3" required>-->
+                <input type="text" id="autor" name="autor" placeholder="Autor" required>
+                <input type="date" id="fecha" name="fecha" placeholder="Fecha" required value="12/12/2017">
+                <input type="text" id="clasificacion" name="clasificacion" placeholder='Clasificación' required>
+                <textarea name="descripcion" placeholder="Descripción" required></textarea>
+                <input type="submit" name="guardar" value="Guardar">
+            </form>
+        </div>
     </div>
-</div>
+<?php } ?>
 <div class="container-list" style="<?php echo $divStyle2 ?>">
     <form method="POST">
         <input type="submit" name="nuevo" value="Agregar Nuevo">
