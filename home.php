@@ -171,6 +171,35 @@ else if (isset($_POST['editar'])) {
      */
     //Obtiene los valores del form , (este código lo tomé prestado de abajo)
 } else if (isset($_POST['editarlo'])) {
+    
+    $actual = (int) $_POST['id'];
+    $detalleIndexUpdate = fopen($indicePath, "r+");
+    $detalleArchivoUpdate = fopen($contenidoPath, "r+");
+$divStyle = "display:block;";
+    $divStyle2 = "display:none;";
+    $divStyleGuardar = "display:none;";
+//Leo los valores del actual
+
+    while (!feof($detalleIndexUpdate)) {
+
+        $line = fgets($detalleIndexUpdate);
+        if (!empty($line)) {
+            $lines = explode(";", $line);
+            foreach ($lines as $curLine) {
+                if (!empty($curLine)) {
+                    $datos = explode(",", $curLine);
+                    if ($datos[0] == $actual) {
+                        $datosActuales = $datos;
+                        $lineaDato = (int) $datos[1]; //donde inicia
+                        fseek($detalleArchivoUpdate, $lineaDato);
+                        $fila = fread($detalleArchivoUpdate, intval($datos[2]));
+                        array_push($arrayActual, explode(",", $fila));
+                    }
+                }
+            }
+        }
+    }
+    
     $nombreActualizar = isset($_POST['nombre']) ? $_POST['nombre'] : '';
     $autorActualizar = isset($_POST['autor']) ? $_POST['autor'] : '';
     $fechaActualizar = isset($_POST['fecha']) ? $_POST['fecha'] : '';
@@ -292,14 +321,14 @@ while (!feof($detalleIndex)) {
 fclose($detalleArchivo);
 fclose($detalleIndex);
 
-echo gettype($descripActual);
-echo $tamanioContenido;
-var_dump($datosActuales);
+//echo gettype($descripActual);
+//echo $tamanioContenido;
+//var_dump($datosActuales);
 
 include('comun/header.php');
 ?>
 
-<div class="container" style="<?php echo $divStyle ?>">
+<div class="container" style="<?php echo $divStyleGuardar ?>">
     <a href="home.php">Volver al listado</a>
     <div class="form-style-6" align="center">
         <h1>Datos de mp3</h1>
@@ -316,6 +345,7 @@ include('comun/header.php');
             <input type="date" id="fecha" name="fecha" value="<?php echo $filaActual[3]; ?>" placeholder="Fecha" required >
             <input type="text" id="clasificacion" name="clasificacion" value="<?php echo $filaActual[5]; ?>"  placeholder='Clasificación' required>
             <input type="text" name="descripcion" value="<?php echo $filaActual[6]; ?>" placeholder="Descripción" required>
+            <input type="hidden" name="id" value="<?php echo $filaActual[0];?>" >;
             <input type="submit" name="editarlo" value="Editar">
         </form>
     </div>
