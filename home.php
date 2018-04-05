@@ -239,7 +239,7 @@ else if (isset($_POST['editar'])) {
                 }unset($lineaActual);
             }
         }
-        
+
         fseek($detalleArchivoUpdate, 0, SEEK_END); //puntero al final del archivo
         $inicioContenido = ftell($detalleArchivoUpdate);
         $nuevasLineas .= "{$datosActuales[0]},{$inicioContenido},{$tamanioContenido},1;";
@@ -264,7 +264,6 @@ else if (isset($_POST['editar'])) {
     $divStyle2 = "display:block;";
     $divStyleGuardar = "display:none;";
 }
-
 
 
 
@@ -326,6 +325,18 @@ while (!feof($detalleIndex)) {
 
 fclose($detalleArchivo);
 fclose($detalleIndex);
+
+$archivo = (isset($_FILES['archivo'])) ? $_FILES['archivo'] : null;
+if (isset($archivo)) {
+    $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
+    $extension = strtolower($extension);
+    $extension_correcta = ($extension == 'mp3');
+    if ($extension_correcta) {
+        $ruta_destino_archivo = "archivos/{$archivo['name']}";
+        $archivo_ok = move_uploaded_file($archivo['tmp_name'], $ruta_destino_archivo);
+    }
+}
+
 
 //echo gettype($descripActual);
 //echo $tamanioContenido;
@@ -398,6 +409,19 @@ if (isset($MODOAGREGAR)) {
                     <th>Acciones</th>
                 </tr>
             </thead>
+
+            <?php if (isset($archivo)): ?>
+                <?php if (!$extension_correcta): ?>
+                    <span style="color: #f00;"> La extensión es incorrecta, el archivo debe mp3. </span> 
+                <?php elseif (!$archivo_ok): ?>
+                    <span style="color: #f00;"> Error al intentar subir el archivo. </span>
+                <?php else: ?>
+                    <strong> El archivo ha sido subido correctamente. </strong>
+                    <br />
+                    <img src="archivos/<?php echo $archivo['name'] ?>" alt="" />
+                <?php endif ?>
+            <?php endif; ?>
+
             <tbody>
                 <?php
                 while (count($arrayContenido) > 0) {
