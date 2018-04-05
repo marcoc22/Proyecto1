@@ -156,7 +156,7 @@ else if (isset($_POST['editar'])) {
     }
 
     /*
-     Esto de aquí era una prueba, no le haga caso XD
+      Esto de aquí era una prueba, no le haga caso XD
       $arrayPivote = array_values($arrayActual);
 
       while (count($arrayPivote) > 0) {
@@ -170,8 +170,7 @@ else if (isset($_POST['editar'])) {
       $descripActual = $cambioActual[6];
      */
     //Obtiene los valores del form , (este código lo tomé prestado de abajo)
-    if (isset($_POST['editarlo'])) {
-        
+} else if (isset($_POST['editarlo'])) {
     $nombreActualizar = isset($_POST['nombre']) ? $_POST['nombre'] : '';
     $autorActualizar = isset($_POST['autor']) ? $_POST['autor'] : '';
     $fechaActualizar = isset($_POST['fecha']) ? $_POST['fecha'] : '';
@@ -181,14 +180,14 @@ else if (isset($_POST['editar'])) {
     $datoActualizar = "{$nombreActualizar},{$autorActualizar},{$fechaActualizar},,{$clasificacionActualizar},{$descripcionActualizar},";
     $tamanioContenido = strlen($datoActualizar);
     $lineaIndexActualizar = "{$datosActuales[0]},{$datosActuales[1]},{$tamanioContenido},1;";
-    
+
     //Si los datos que vienen en el form son menores al tamaño actual inserte
     if ($datosActuales[2] > $tamanioContenido) {
 
-    //El puntero ya se encuentra en la posición que necesito por el fseek pasado
+        //El puntero ya se encuentra en la posición que necesito por el fseek pasado
         fwrite($detalleIndexUpdate, $lineaIndexActualizar); //se almacena: id, inicio, tam del contenido, 1 o 0 si esta activo
         fwrite($detalleArchivoUpdate, $datoActualizar);
-    //Si no entonces bórreme el valor de forma lógica y luego insérte al final del archivo   
+        //Si no entonces bórreme el valor de forma lógica y luego insérte al final del archivo   
     } else {
 
         //"Llamo" al método eliminar para que lo edite 
@@ -210,21 +209,20 @@ else if (isset($_POST['editar'])) {
                 }unset($lineaActual);
             }
         }
-        
+
         fclose($detalleIndexUpdate);
         fclose($detalleArchivoUpdate);
-        
+
         //Esto ingresa los valores al final
         $detalleIndexLineaFinal = fopen($indicePath, "a+");
         $detalleArchivoLineaFinal = fopen($contenidoPath, "a+");
-        
+
         //Ya borrado lo inserta al final
         fwrite($detalleArchivoLineaFinal, $datoActualizar);
         fwrite($detalleArchivoIndexFinal, $lineaIndexActualizar);
-        
+
         fclose($detalleArchivoLineaFinal);
         fclose($detalleArchivoIndexFinal);
-    }    
     }
 } else {
     $divStyle = "display:none;";
@@ -306,11 +304,11 @@ include('comun/header.php');
     <div class="form-style-6" align="center">
         <h1>Datos de mp3</h1>
         <font color="<?php echo isset($alerta) ? 'red' : 'green'; ?>"><?php echo isset($alerta) ? $alerta : $success; ?></font>
-<?php
-while (count($arrayActual) > 0) {
-    $filaActual = array_pop($arrayActual);
-}
-?>
+        <?php
+        while (count($arrayActual) > 0) {
+            $filaActual = array_pop($arrayActual);
+        }
+        ?>
         <form action='' method='post' enctype='multipart/form-data'>
             <input type="text" id="nombre" value="<?php echo $filaActual[1]; ?>" name="nombre" placeholder="Nombre" required>
             <!--<input type="file" id="archivo" name="archivo"  accept=".mp3" required>-->
@@ -357,37 +355,36 @@ while (count($arrayActual) > 0) {
                 </tr>
             </thead>
             <tbody>
-<?php
-while (count($arrayContenido) > 0) {
+                <?php
+                while (count($arrayContenido) > 0) {
 
-    $btnEliminar = "<input type='submit' name='eliminar' value='Eliminar'>";
-    $btnEditar = "<input type='submit' name='editar' value='Editar'>";
-    $btnMp3 = '<input type="file" name="archivo"  accept=".mp3" style="width:134px;">';
-    $btnMp3 .= '<input type="submit" name="subir" value="Subir mp3" >';
-    $row = array_pop($arrayContenido);
-    echo '<tr>';
+                    $btnEliminar = "<input type='submit' name='eliminar' value='Eliminar'>";
+                    $btnEditar = "<input type='submit' name='editar' value='Editar'>";
+                    $btnMp3 = '<input type="file" name="archivo"  accept=".mp3" style="width:134px;">';
+                    $btnMp3 .= '<input type="submit" name="subir" value="Subir mp3" >';
+                    $row = array_pop($arrayContenido);
+                    echo '<tr>';
 
-    echo "<td>{$row[1]}</td>";
-    echo "<td>{$row[2]}</td>";
-    echo "<td>{$row[3]}</td>";
-    echo "<td>{$row[4]}</td>";
-    echo "<td>{$row[5]}</td>";
-    echo "<td>{$row[6]}</td>";
-    echo '<td>';
-    echo "<form action='' method='post' enctype='multipart/form-data'>";
-    echo strlen($row[7]) <= 2 ? $btnMp3 : "<span>{$row[7]}</span>";
-    echo $btnEditar;
-    echo $btnEliminar;
-    echo '<input type="hidden" name="id" value="' . $row[0] . '" >';
-    echo "</form>";
-    echo '</td>';
-    echo '</tr>';
-}
-?>
+                    echo "<td>{$row[1]}</td>";
+                    echo "<td>{$row[2]}</td>";
+                    echo "<td>{$row[3]}</td>";
+                    echo "<td>{$row[4]}</td>";
+                    echo "<td>{$row[5]}</td>";
+                    echo "<td>{$row[6]}</td>";
+                    echo '<td>';
+                    echo "<form action='' method='post' enctype='multipart/form-data'>";
+                    echo strlen($row[7]) <= 2 ? $btnMp3 : "<span>{$row[7]}</span>";
+                    echo $btnEditar;
+                    echo $btnEliminar;
+                    echo '<input type="hidden" name="id" value="' . $row[0] . '" >';
+                    echo "</form>";
+                    echo '</td>';
+                    echo '</tr>';
+                }
+                ?>
             </tbody>
         </table>
     </div>
 </div>
-                <?php
-                include('comun/footer.php');
-                
+<?php
+include('comun/footer.php');
