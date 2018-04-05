@@ -170,7 +170,7 @@ else if (isset($_POST['editar'])) {
       $descripActual = $cambioActual[6];
      */
     //Obtiene los valores del form , (este código lo tomé prestado de abajo)
-    if (isset($_POST['editando'])) {
+    if (isset($_POST['editarlo'])) {
         
     $nombreActualizar = isset($_POST['nombre']) ? $_POST['nombre'] : '';
     $autorActualizar = isset($_POST['autor']) ? $_POST['autor'] : '';
